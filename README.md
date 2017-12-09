@@ -1,2 +1,2 @@
 # Some_Programs
-This using for Learning.
+This repository using for Learning.
