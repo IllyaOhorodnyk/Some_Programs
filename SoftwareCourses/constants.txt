@@ -1,0 +1,43 @@
+# Template to create ValueError message
+VALUE_ERR = "Not supported type {} to attribute {}, this need to {} type"
+
+# Maintain menu
+MAIN_MENU = "\
+What you want to do?\n\
+1 - Create new Teacher\n\
+2 - Show all Teachers\n\
+3 - Upgrade data on Teacher\n\
+4 - Create new Course\n\
+5 - Show all Courses\n\
+6 - Upgrade date on Course\n\
+7 - Read from the File\n\
+8 - Write to the File\n\
+9 - Close Progam"
+
+# Teacher upgrading menu
+TEACHER_MENU = "\
+What you want to do?\n\
+1 - Reset new name\n\
+2 - Add a Course from list\n\
+3 - Delete a Course from exist\n\
+4 - Delete all Teacher instance\n\
+5 - Leave this menu"
+
+# Course upgrading menu
+COURSE_MENU = "\
+What you want to do?\n\
+1 - Reset new name\n\
+2 - Add a new topic\n\
+3 - Delete a exist topic\n\
+4 - Add a Teacher from list\n\
+5 - Delete a Teacher from exits\n\
+6 - Reset Lab/Town\n\
+7 - Delete all Course instance\n\
+8 - Leave this menu"
+
+# Meun to select type of creating course
+TYPE_MENU = "\
+Which type of Course you want\n\
+1 - LocalCourse\n\
+2 - OffsiteCourse\n\
+3 - Leave this menu\n"

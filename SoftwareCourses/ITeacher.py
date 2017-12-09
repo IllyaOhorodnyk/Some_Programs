@@ -83,10 +83,11 @@ class Teacher(ITeacher):
     def __repr__(self, *args, **kwargs):
         out = ''
         out += 'Teacher: Name=({}); '.format(self.name)
-        out += 'Courses =[ '
-        for course in self.courses:           
-            out += course.name + ','
-        out = out[:-1]
+        if self.courses:
+            courses = list(map(lambda x: x.name, self.courses))
+        else:
+            courses = list()
+        out += 'Courses={};'.format(courses)
         out += ']\n'
         
         return out
