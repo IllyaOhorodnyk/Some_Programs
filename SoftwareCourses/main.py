@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from abc import abstractmethod, abstractproperty, ABCMeta
 from ITeacher import Teacher
-from ICourse import Course
+from ICourse import ICourse
 from ILocalCourse import LocalCourse
 from IOffsiteCourse import OffsiteCourse
 from ICourseFactory import CourseFactory
- 
+
 constants = open('constants.txt')
 exec(constants.read())
 constants.close()

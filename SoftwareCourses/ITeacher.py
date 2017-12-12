@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from abc import abstractmethod, abstractproperty, ABCMeta
+from ICourse import Course
 
 # Abctract interface to description of concrete Teacher implementation
 class ITeacher(metaclass=ABCMeta):    
