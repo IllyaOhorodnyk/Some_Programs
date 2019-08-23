@@ -1,0 +1,17 @@
+Metadata-Version: 2.1
+Name: cons-menu
+Version: 0.0.1
+Summary: Utility for create and use console menu.
+Home-page: https://github.com/IllyaOhorodnyk/Some_Programs/cons-menu
+Author: Illya Ohorodnyk
+Author-email: illyaohorodnyk@gmail.com
+License: UNKNOWN
+Description: WordPress Vulnerability Catalog
+        
+        Yet it is mirroring from wpvulndb.com
+        
+Platform: UNKNOWN
+Classifier: Programing Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operation System :: OS Independent
+Description-Content-Type: text/markdown
