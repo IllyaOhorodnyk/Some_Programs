@@ -1,4 +1,3 @@
-import os
 import sys
 
 
@@ -44,12 +43,7 @@ class Menu:
 			RES = input(self.prompt)
 			self.items.get(RES, lambda: print("Not exists item!"))()
 
-funcs = [lambda: print(1), lambda: print(2)]
-annotations = ["print 1"]
 
-def main():
-	menu = Menu(funcs, annotations)
-	menu.run()
 
 if __name__ == "__main__":
 	main()
