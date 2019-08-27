@@ -1,0 +1,15 @@
+{
+	"resources": [
+		{
+			"domain": "wpvulndb.com",
+			"reign": "plugins",
+			"increaseOption": "page"
+		},
+
+		{
+			"domain": "wpvulndb.com",
+			"reign": "wordpresses",
+			"increaseOption": "page"
+		}
+	]
+}
