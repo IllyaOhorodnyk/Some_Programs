@@ -1,4 +1,5 @@
 {
+	"force_reload": false,
 	"resources": [
 		{
 			"domain": "wpvulndb.com",

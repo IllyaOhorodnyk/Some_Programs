@@ -27,7 +27,7 @@ def parse_main_page(url):
 			 re.search(r"<a href=\"/plugins/(.{2,70})\">.{2,70}</a>", row).group(1)
 
 		info[i]["vulnerabilityLink"] = "/vulnerabilities/" +\
-			re.search(r"<a href=\"/vulnerabilities/(.{1,70})\">.{2,70}</a>", row).group(1)
+			re.search(r"<a href=\"/vulnerabilities/(.{1,70})\">.{2,80}</a>", row).group(1)
 		
 		info[i]["created-at"] = re.search(r"<td class=\"created-at\">(.{10})</td>", row).group(1)
 
@@ -54,34 +54,52 @@ def parse_plugin_page(url):
 
 
 def main():
-	config = json.load(open("config.json"))
-	resources = config["resources"]
-	url = "https://" + resources[0]["domain"] + "/" + resources[0]["reign"]
+	# Trying to load configuration file
+	try:
+		file = open("config.json", "w")
+	except FileNotFoundError as e:
+		print("Configuration file confing.json not found.")
+		sys.exit(1)
+	else:
+		file.flush()
+		file.close()
 
-	print("Getting cout of pages.")
-	data = urlopen(url, context=ssl.SSLContext()).read().decode("utf-8").replace("\n", '')
-	pages_count = re.search(r"<a href=\"/plugins\?page=(\d*)\">Last &raquo;</a>", data).group(1)
+	# Open file to save context
+	try:
+		context = open("context.json", "x")
+	except FileExistsError as e:
+		context = open("context.json", "w")
+
+	if context.get("pages_count") and not config["force_reload"]:
+		pages_count = context["pages_count"]
+	else:
+		resources = config["resources"]
+		url = "https://" + resources[0]["domain"] + "/" + resources[0]["reign"]
+
+		print("Getting cout of pages.")
+		data = urlopen(url, context=ssl.SSLContext()).read().decode("utf-8").replace("\n", '')
+		pages_count = re.search(r"<a href=\"/plugins\?page=(\d*)\">Last &raquo;</a>", data).group(1)
+
 	print("Cout of pages is -", pages_count)
 
-	print(parse_plugin_page("https://wpvulndb.com/plugins/nextgen-gallery"))
+	if context.get("forse_reload") and os.path.exists("indexes.json"):
+		print("Index of all pages.")
+		indexes = dict()
+	
+		for i in range(1, int(pages_count)+1):
+			print("Getting {i} page".format(i=i), end="\r")
+			indexes["page_"+str(i)] = parse_main_page(url + "?" + resources[0]["increaseOption"] + "=" + str(i))
 
-#	print("Index of all pages.")
-#	indexes = dict()
-#	
-#	for i in range(1, int(pages_count)+1):
-#		print("Getting {i} page".format(i=i), end="\r")
-#		indexes["page_"+str(i)] = parse_main_page(url + "?" + resources[0]["reign"] + "=" + str(i))
-#
-#	try:
-#		file = open("indexes.json", "x")
-#	except FileExistsError:
-#		file = open("indexes.json", "w")
-#	finally:
-#		file.write(json.dumps(indexes))
-#		file.flush()
-#		file.close()
-#
-#	print("\nSucessfuly writed into indexes.json")
+		try:
+			file = open("indexes.json", "x")
+		except FileExistsError:
+			file = open("indexes.json", "w")
+		finally:
+			file.write(json.dumps(indexes, sort_keys=True, indent=4))
+			file.flush()
+			file.close()
+
+		print("\nSucessfuly writed into indexes.json")
 
 if __name__ == "__main__":
 	main()
