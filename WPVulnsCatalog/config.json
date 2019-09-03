@@ -1,0 +1,37 @@
+{
+	"force_reload": false,
+	"resourses": [
+		{
+			"domain": "wpvulndb.com",
+			"dividion": "/wordpresses",
+			"enumerationOption": "?page=",
+			"enumerationSet": "",
+			"pagesCountSelector": ".last > a",
+			"recordParseSelectors": [],
+			"recordLinkSelector": "",
+			"itemParseSelectors": [],
+			"parserProtectionBypass": ""
+		}, {
+			"domain": "wpvulndb.com",
+			"dividion": "/plugins",
+			"enumerationOption": "?page=",
+			"enumerationSet": "",
+			"pagesCountSelector": ".last > a",
+			"recordParseSelectors": [],
+			"recordLinkSelector": "",
+			"itemParseSelectors": [],
+			"parserProtectionBypass": ""
+		}, {
+			"domain": "wpvulndb.com",
+			"dividion": "/themes",
+			"enumerationOption": "?page=",
+			"enumerationSet": "",
+			"pagesCountSelector": ".last > a",
+			"recordParseSelectors": [],
+			"recordLinkSelector": "",
+			"itemParseSelectors": [],
+			"parserProtectionBypass": ""
+		}
+
+	]
+}
