@@ -5,14 +5,24 @@ Yet it is mirroring from wpvulndb.com
 Config file structure:
 	resources:
 		domain;
-		reign;
-		increaseOption;
+		dividion;
+		enumerationOption;
+		enumerationSet # Can be an empty
 		pagesCountSelector; # Selector in CSS format
-		rowsExtractorSelectors; # Internal dictionary of name elements that need extract and they value
+		recordParseSelecors; # Internal dictionary of name elements that need extract and they value
+		recordLinkSelector; # Record link should be write in another list/dictonary
+		itemParseSelectors; # 
 		parserProtectionBypass; # Can be name of func
 
 
 Procedure of parsing:
 	- Getting number of pages
-	- Indexing of all pages by rowsExtractorSelectors
-	- Getting info from rows pages by $(nameNewSelector)s
+	- Getting all indexes by enumerationOption with enumerationSet
+	- Parsing each index by recordParseSelectors
+	- Getting info from each page that pointed in recordLinks itemParseSelectors
+
+
+Structure of vulnerabilities storage:
+	- Indexes (from 1 to pages_count)
+	- Records (rows in indexed table)
+	- Items (key-value set on each enumerated row)
