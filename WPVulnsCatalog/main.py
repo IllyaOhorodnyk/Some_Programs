@@ -10,75 +10,37 @@ from urllib.request import Request, urlopen
 
 from bs4 import BeautifulSoup as bs
 
-
-def parse_main_page(url):	
-	request = Request(url)
-	data = urlopen(request, context=ssl.SSLContext()).read().decode("utf-8").replace("\n", '')
-
-	table = re.search(r"<tbody>(.*)</tbody>", data).group(1).replace("</tr>", "</tr>\n")
-	rows = re.findall(r"<tr>(.*)</tr>", table)
-	info = list()
-	
-	for i in range(len(rows)):
-		row = rows[i]
-		info.append(dict())
-
-		info[i]["pluginLink"] = "/plugins/" +\
-			 re.search(r"<a href=\"/plugins/(.{2,70})\">.{2,70}</a>", row).group(1)
-
-		info[i]["vulnerabilityLink"] = "/vulnerabilities/" +\
-			re.search(r"<a href=\"/vulnerabilities/(.{1,70})\">.{2,80}</a>", row).group(1)
-		
-		info[i]["created-at"] = re.search(r"<td class=\"created-at\">(.{10})</td>", row).group(1)
-
-	return info
-
-
-def parse_plugin_page(url):
-	request = Request(url)
-	data = urlopen(request, context=ssl.SSLContext()).read().decode("utf-8")
-	soup = bs(data, "html.parser")
-	info = dict()
-
-	info['fullName'] = soup.find("h1").text
-	info["vulnerabilities"] = list()
-	for row in soup.find_all("tr"):
-		row_dict = dict()
-		row_dict["publishData"] = row.find("td").text
-		row_dict["fixed_in"] = row.find(class_="fixed_in").text
-		row_dict["vulnerabilityLink"] = row.find("a").get("href")
-		row_dict["vulnerabilityName"] = row.find("a").text
-		info["vulnerabilities"].append(row_dict)
-
-	return info
-
+from context import Context
 
 def main():
 	# Trying to load configuration file
 	try:
-		file = open("config.json", "w")
+		file = open("config.json", "r")
+		config = json.loads(file.read())
 	except FileNotFoundError as e:
 		print("Configuration file confing.json not found.")
+		sys.exit(1)
+	except json.decoder.JSONDecodeError as e:
+		print("Configuration has invalid format.")
 		sys.exit(1)
 	else:
 		file.flush()
 		file.close()
 
-	# Open file to save context
-	try:
-		context = open("context.json", "x")
-	except FileExistsError as e:
-		context = open("context.json", "w")
+	# Create dictionary-like object to dynamic manage context
+	context = Context("context.json")
 
 	if context.get("pages_count") and not config["force_reload"]:
 		pages_count = context["pages_count"]
 	else:
 		resources = config["resources"]
-		url = "https://" + resources[0]["domain"] + "/" + resources[0]["reign"]
+		url = "https://" + resources[0]["domain"] + "/" + resources[0]["dividion"]
 
 		print("Getting cout of pages.")
 		data = urlopen(url, context=ssl.SSLContext()).read().decode("utf-8").replace("\n", '')
-		pages_count = re.search(r"<a href=\"/plugins\?page=(\d*)\">Last &raquo;</a>", data).group(1)
+		soup = bs(data, "html.parser")
+		pages_count = soup.select(resources[1]["pagesCountSelector"])[0].get("href").split("=")[1]
+		context["pages_count"] = pages_count
 
 	print("Cout of pages is -", pages_count)
 
