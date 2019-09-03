@@ -26,3 +26,5 @@ Structure of vulnerabilities storage:
  * Indexes (from 1 to pages_count or enumerationSet)
  * Records (rows in indexed table)
  * Items (key-value set on each enumerated row)
+
+EOF
