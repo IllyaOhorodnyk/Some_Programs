@@ -2,6 +2,7 @@
 	"force_reload": false,
 	"resources": [
 		{
+			"name": "wpvulnsdb_WordPress_versions",
 			"domain": "wpvulndb.com",
 			"dividion": "/wordpresses",
 			"enumerationOption": "?page=",
@@ -12,6 +13,7 @@
 			"itemParseSelectors": [],
 			"parserProtectionBypass": ""
 		}, {
+			"name": "wpvulns_plugins",
 			"domain": "wpvulndb.com",
 			"dividion": "/plugins",
 			"enumerationOption": "?page=",
@@ -22,6 +24,7 @@
 			"itemParseSelectors": [],
 			"parserProtectionBypass": ""
 		}, {
+			"name": "wpvulns_themes",
 			"domain": "wpvulndb.com",
 			"dividion": "/themes",
 			"enumerationOption": "?page=",

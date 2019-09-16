@@ -4,10 +4,11 @@ Yet it is mirroring from wpvulndb.com
 
 Config file structure:
  * resources:
+  * name;
   * domain;
   * dividion;
   * enumerationOption;
-  * enumerationSet # Name of file that contain a set or if empty will using range from 1 to pagesCount
+  * enumerationSet # Name of .json file that contain a set or if empty will using range from 1 to pagesCount
   * pagesCountSelector; # Selector in CSS format
   * recordParseSelecors; # Internal dictionary of name elements that need extract and they value
   * recordLinkSelector; # Record link should be write in another list/dictonary

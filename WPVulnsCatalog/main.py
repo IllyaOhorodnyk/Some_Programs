@@ -11,6 +11,7 @@ from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup as bs
 
 from context import Context
+from extra import Resource
 
 def main():
 	# Trying to load configuration file
@@ -27,41 +28,8 @@ def main():
 		file.flush()
 		file.close()
 
-	# Create dictionary-like object to dynamic manage context
-	context = Context("context.json")
-
-	if context.get("pages_count") and not config["force_reload"]:
-		pages_count = context["pages_count"]
-	else:
-		resources = config["resources"]
-		url = "https://" + resources[0]["domain"] + "/" + resources[0]["dividion"]
-
-		print("Getting cout of pages.")
-		data = urlopen(url, context=ssl.SSLContext()).read().decode("utf-8").replace("\n", '')
-		soup = bs(data, "html.parser")
-		pages_count = soup.select(resources[1]["pagesCountSelector"])[0].get("href").split("=")[1]
-		context["pages_count"] = pages_count
-
-	print("Cout of pages is -", pages_count)
-
-	if context.get("forse_reload") and os.path.exists("indexes.json"):
-		print("Index of all pages.")
-		indexes = dict()
-	
-		for i in range(1, int(pages_count)+1):
-			print("Getting {i} page".format(i=i), end="\r")
-			indexes["page_"+str(i)] = parse_main_page(url + "?" + resources[0]["increaseOption"] + "=" + str(i))
-
-		try:
-			file = open("indexes.json", "x")
-		except FileExistsError:
-			file = open("indexes.json", "w")
-		finally:
-			file.write(json.dumps(indexes, sort_keys=True, indent=4))
-			file.flush()
-			file.close()
-
-		print("\nSucessfuly writed into indexes.json")
+	# Create resource instance
+	resource = Resource(config["resources"][0])
 
 if __name__ == "__main__":
 	main()
