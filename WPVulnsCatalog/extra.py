@@ -53,38 +53,7 @@ class Resource:
 
 	def parse(self):
 		# Getting number of pages
-		if not self.enumerationSet and self.context.get("pages_count", False) and not self.force_reload:
-			pages_count = self.context["pages_count"]
-			logging.info("Getting pages_count from context.")
-			logging.info("Count of pages - "+str(pages_count))
-			enumerations = list(range(1, pages_count+1))
-		elif self.enumerationSet:
-			try:
-				file = open(self.enumerationSet)
-				enumerations = json.loads(file.read())["enumerationSet"]
-			except FileNotFoundError as e:
-				logging.error("File {} not found.".format(self.enumerationSet))
-				sys.exit(1)
-			except json.decoder.JSONDecodeError as e:
-				logging.error("Invalid JSON fomat of file "+self.enumerationSet)
-				sys.exit(1)
-			else:
-				logging.info("Getting enumerations from "+self.enumerationSet)
-			finally:
-				file.close()
-		else:
-			try:
-				soup = self.get_soup("https://" + self.domain + self.dividion)
-				pages_count = int(soup.select(self.pagesCountSelector)[0].text)
-			except Exception as e:
-				logging.error("Error while parsing pages_count")
-				sys.exit(1)
-			else:
-				logging.info("pages_count was parsed.")
-				logging.info("pages_count is - "+str(pages_count))
-			enumerations = list(range(1, pages_count+1)
-			self.context["pages_count"] = pages_count
-		enumerations = list(map(lambda x: str(x), enumerations))
+		
 		
 		# Parsing each index by recordParseSelectors
 
