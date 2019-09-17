@@ -9,7 +9,7 @@ from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup as bs
 
 class Resource:
-	def __init__(self, configurationi, force_reload=False):
+	def __init__(self, configuration, force_reload=False):
 		if not isinstance(configuration, dict):
 			raise ValueError("Parameter configuration should be dict.")
 
@@ -17,12 +17,35 @@ class Resource:
 			raise ValusError("Parameter force_reload should be bool.")
 
 		self.force_reload = force_reload
-		### BLOCK OF CHECK CONFIGURATION ###
-		####################################
-		self.configuration = configuration
+
+		self.assign_config(configuration)
 		# Create context for this resource
 		self.context = Context("contextes/"+configuration["name"]+".json")
-			
+
+	def assign_config(self, config):
+		keys = ["name", "domain", "dividion", "enumerationOption",
+			"enumerationSet", "pagesCountSelector", "recordParseSelectors",
+			"recordLinkSelector", "itemParseSelectors", "parserBypass"]
+		keys_dicts = ["recordParseSelectors", "itemParseSelectors"]
+		keys_strings = ["name", "domain", "dividion", "enumerationOption", 
+				"enumerationSet", "pagesCountSelector", "recordLinkSelector",
+				"parserBypass"]
+
+		for key in keys:
+			if not config.get(key, False):
+				raise ValueError("Missing {} key".format(key))
+
+		for key in keys_dicts:
+			if not isinstance(config[key], dict):
+				raise ValueError("Key {} should be dict".format(key))
+
+		for key in keys_strings:
+			if not isinstance(config[key], str):
+				raise ValueError("Key {} should be str".format(key))
+
+		for key in keys:
+			self.__setattr__(key, config[key])
+
 	def get_soup(self, url):
 			request = Reqeust(url)
 			plain_text = urlopen(request, context=ssl.SSLContext())
@@ -30,43 +53,42 @@ class Resource:
 
 	def parse(self):
 		# Getting number of pages
-		if not self.config["enumerationSet"] and self.context.get("pages_count", False) and not self.force_reload:
+		if not self.enumerationSet and self.context.get("pages_count", False) and not self.force_reload:
 			pages_count = self.context["pages_count"]
 			logging.info("Getting pages_count from context.")
 			logging.info("Count of pages - "+str(pages_count))
-			enumerationSet = list(range(1, pages_count+1))
-		elif self.config["enumerationSet"]:
+			enumerations = list(range(1, pages_count+1))
+		elif self.enumerationSet:
 			try:
-				file = open(self.config["enumerationSet"])
-				enumerationSet = json.loads(file.read())["enumerationSet"]
+				file = open(self.enumerationSet)
+				enumerations = json.loads(file.read())["enumerationSet"]
 			except FileNotFoundError as e:
-				logging.error("File {} not found.".format(self.config["enumerationSet"]))
+				logging.error("File {} not found.".format(self.enumerationSet))
 				sys.exit(1)
 			except json.decoder.JSONDecodeError as e:
-				logging.error("Invalid JSON fomat of file "+self.config["enumerationSet"])
+				logging.error("Invalid JSON fomat of file "+self.enumerationSet)
 				sys.exit(1)
 			else:
-				logging.info("Getting enumerationSeet from "+self.config["enumerationSet"])
+				logging.info("Getting enumerations from "+self.enumerationSet)
 			finally:
 				file.close()
 		else:
-			selector = self.config["pagesCountSelector"]
 			try:
-				soup = self.get_soup("https://"+self.config["domain"]+self.config["dividion"])
-				pages_count = int(soup.select(selector)[0].text)
+				soup = self.get_soup("https://" + self.domain + self.dividion)
+				pages_count = int(soup.select(self.pagesCountSelector)[0].text)
 			except Exception as e:
 				logging.error("Error while parsing pages_count")
 				sys.exit(1)
 			else:
 				logging.info("pages_count was parsed.")
 				logging.info("pages_count is - "+str(pages_count))
-			enumerationSet = list(range(1, pages_count+1)
+			enumerations = list(range(1, pages_count+1)
 			self.context["pages_count"] = pages_count
-		enumerationSet = list(map(lambda x: str(x), enumerationSet))
+		enumerations = list(map(lambda x: str(x), enumerations))
+		
 		# Parsing each index by recordParseSelectors
-		self.indexes = Context("indexes/"+self.config["name"]+".json")
-		last_index = self.context.get("lastIndex")
-			
+
+		
 		# Getting info from each page that pointed in recordLinks by itemParseSelectors
 
 	def __repr__(self):
