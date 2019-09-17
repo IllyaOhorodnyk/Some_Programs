@@ -18,7 +18,9 @@ Config file structure:
 
 Procedure of parsing:
  * Create indexes (enumerable object that contain list of values for enumerationOption parameter)
+    config["enumerationOption"], config["enumerationSet"], config["pagesCountSelector"] ==> {INDEXATION} ==> indexes(context protected)
  * Parsing records on each index (using recordParseSelectors and recordLinkSelector)
+    config["recordParseSelectors"], config["recordLinkSelector"],
  * Record links should be sorted in athor list that named pages
  * Getting info from each page that pointed in recordLinks itemParseSelectors
 
