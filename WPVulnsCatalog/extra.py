@@ -23,42 +23,51 @@ class Resource:
 		self.context = Context("contextes/"+configuration["name"]+".json")
 
 	def assign_config(self, config):
+		# List of all keys
 		keys = ["name", "domain", "dividion", "enumerationOption",
 			"enumerationSet", "pagesCountSelector", "recordParseSelectors",
 			"recordLinkSelector", "itemParseSelectors", "parserBypass"]
+		# List of keys that relate to dictrionaty type
 		keys_dicts = ["recordParseSelectors", "itemParseSelectors"]
+		# List of keys that relate to string type
 		keys_strings = ["name", "domain", "dividion", "enumerationOption", 
 				"enumerationSet", "pagesCountSelector", "recordLinkSelector",
 				"parserBypass"]
-
+		# Check to all keys exist
 		for key in keys:
 			if not config.get(key, False):
 				raise ValueError("Missing {} key".format(key))
-
+		# Check to keys_dict are relate to dictionary type
 		for key in keys_dicts:
 			if not isinstance(config[key], dict):
 				raise ValueError("Key {} should be dict".format(key))
-
+		# Check to keys_strings are relate to str type
 		for key in keys_strings:
 			if not isinstance(config[key], str):
 				raise ValueError("Key {} should be str".format(key))
-
+		# Assigment key from configuration dictionary to instance as attributes
 		for key in keys:
 			self.__setattr__(key, config[key])
 
-	def get_soup(self, url):
+	def select_from_url(self, url, selector):
 			request = Reqeust(url)
 			plain_text = urlopen(request, context=ssl.SSLContext())
 			soup = bs(plain_text, "html.parser")
 
-	def parse(self):
-		# Getting number of pages
-		
-		
-		# Parsing each index by recordParseSelectors
+			return soup.select(selector)
 
+	def parse(self):
+		### INDEXATION ###
 		
-		# Getting info from each page that pointed in recordLinks by itemParseSelectors
+		##################		
+		
+		### RECORDS_PARSING ###
+
+		#######################
+		
+		### PAGE_PARSING ###
+
+		####################
 
 	def __repr__(self):
 		return "<Resourse instance with cofiguration: {}>".format(self.configuration)
