@@ -36,38 +36,102 @@ class Resource:
 		# Check to all keys exist
 		for key in keys:
 			if not config.get(key, False):
+				logging.error("Missing {} key".format(key))
 				raise ValueError("Missing {} key".format(key))
 		# Check to keys_dict are relate to dictionary type
 		for key in keys_dicts:
 			if not isinstance(config[key], dict):
+				logging.error("Invalid type of key {}".format(key))
 				raise ValueError("Key {} should be dict".format(key))
 		# Check to keys_strings are relate to str type
 		for key in keys_strings:
 			if not isinstance(config[key], str):
+				logging.error("Invalid type of key {}".format(key))
 				raise ValueError("Key {} should be str".format(key))
 		# Assigment key from configuration dictionary to instance as attributes
 		for key in keys:
 			self.__setattr__(key, config[key])
 
 	def select_from_url(self, url, selector):
-			request = Reqeust(url)
-			plain_text = urlopen(request, context=ssl.SSLContext())
-			soup = bs(plain_text, "html.parser")
+		request = Reqeust(url)
+		plain_text = urlopen(request, context=ssl.SSLContext())
+		soup = bs(plain_text, "html.parser")
 
-			return soup.select(selector)
+		return soup.select(selector)
 
-	def parse(self):
-		### INDEXATION ###
-		
-		##################		
-		
-		### RECORDS_PARSING ###
+	def make_indexes(self, enumerations):
+		indexes = list()
+		for each in enumeration:
+			url = "https://" + self.domain + self.dividion + self.enumerationOption + each
+			indexes.append(url)
 
-		#######################
-		
-		### PAGE_PARSING ###
+		return indexes
 
-		####################
+	def indexation(self):
+		if self.enumerationSet: # In case if indexes in enumerationSet
+			try:
+				file = open(self.enumerationSet)
+				enumerations = json.loads(file.read())
+			except FileNotFoundError as e:
+				logging.error("File {} not found.".format(self.enumerationSet))
+				sys.exit(1)
+			except json.decoder.JSONDecodeError as e:
+				logging.error("File {} has invalid json syntax.".format(self.enumerationSet))
+				sys.exeit(1)
+			else:
+				indexes = self.make_indexes(enumerations)
+				logging.info("Successful got indexes from enumerationSet")
+				self.context["indexed"] = True
+				Context("indexes/"+self.name+".json")["indexes"] = indexes
+		elif self.context.get("indexed", False) and not self.force_reload: # In case if need to get from context
+			try:
+				file = open("indexes/"+self.name+".json")
+				indexes = json.load(fiel.read())["indexes"]
+			except FileNotFound as e:
+				logging.error("Indexes file for {} not found".format(self.name))
+				sys.exit(1)
+			except json.decoder.JSONDecodeError as e:
+				logging.error("Indexes file for {} has invalid json syntax".format(self.name))
+				sys.exit(1)
+			else:
+				logging.info("Indexes file is successful parsed.")
+		elif not self.context.get("indexed", False) or self.force_reload: # In case if not indexed yet or need to force reload
+			url = "https://" + self.domain + self.dividion
+			try:
+				pages_count = int(self.select_from_url(url, self.pagesCountSelector)[0])
+			except Exception as e:
+				logging.warning(repr(e))
+				raise e
+
+			indexes = self.make_indexes(list(range(1, pages_count+1)))
+			self.context["indexed"] = True
+			Context("indexes/"+self.name+".json")["indexes"] = indexes
+			logging.info("Indexes was get from pages_count")
+		else:
+			raise RuntimeError("Unexcepted case.")
+
+		return indexes
+
+	def records_parsing(self, indexes):
+		pass		
+
+		return records
+
+	def extract_links(self, records):
+		pass
+
+		return links
+
+	def pages_parsing(self, links)
+		pass
+
+		return pages
+
+	def parse()
+		indexes = self.indexation()
+		records = self.records_parsing(indexes)
+		links = self.extract_links(records)
+		pages = self.pages_parsing(links)
 
 	def __repr__(self):
 		return "<Resourse instance with cofiguration: {}>".format(self.configuration)
