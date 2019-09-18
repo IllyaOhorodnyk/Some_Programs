@@ -8,9 +8,8 @@
 			"enumerationOption": "?page=",
 			"enumerationSet": "",
 			"pagesCountSelector": ".last > a",
-			"recordParseSelectors": [],
-			"recordLinkSelector": "",
-			"itemParseSelectors": [],
+			"recordParseSelectors": {},
+			"itemParseSelectors": {},
 			"parserProtectionBypass": ""
 		}, {
 			"name": "wpvulns_plugins",
@@ -19,9 +18,8 @@
 			"enumerationOption": "?page=",
 			"enumerationSet": "",
 			"pagesCountSelector": ".last > a",
-			"recordParseSelectors": [],
-			"recordLinkSelector": "",
-			"itemParseSelectors": [],
+			"recordParseSelectors": {},
+			"itemParseSelectors": {},
 			"parserProtectionBypass": ""
 		}, {
 			"name": "wpvulns_themes",
@@ -30,9 +28,8 @@
 			"enumerationOption": "?page=",
 			"enumerationSet": "",
 			"pagesCountSelector": ".last > a",
-			"recordParseSelectors": [],
-			"recordLinkSelector": "",
-			"itemParseSelectors": [],
+			"recordParseSelectors": {},
+			"itemParseSelectors": {},
 			"parserProtectionBypass": ""
 		}
 

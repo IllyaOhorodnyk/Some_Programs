@@ -53,11 +53,22 @@ class Resource:
 			self.__setattr__(key, config[key])
 
 	def select_from_url(self, url, selector):
-		request = Reqeust(url)
-		plain_text = urlopen(request, context=ssl.SSLContext())
-		soup = bs(plain_text, "html.parser")
+		if isinstance(selector, str):
+			request = Reqeust(url)
+			plain_text = urlopen(request, context=ssl.SSLContext())
+			soup = bs(plain_text, "html.parser")
 
-		return soup.select(selector)
+			return soup.select(selector)
+
+		elif isinstance(selector, dict):
+			result = dict()
+			for key in selector:
+				request = Request(url)
+				plain_text = urlopen(request, context=ssl.SSLContext())
+				soup = bs(plain_text, "html.parser")
+				result[key] = soup.select(selector[key])
+
+			return result
 
 	def make_indexes(self, enumerations):
 		indexes = list()
@@ -83,7 +94,7 @@ class Resource:
 				logging.info("Successful got indexes from enumerationSet")
 				self.context["indexed"] = True
 				Context("indexes/"+self.name+".json")["indexes"] = indexes
-		elif self.context.get("indexed", False) and not self.force_reload: # In case if need to get from context
+		elif self.context.get("indexed", False) and not self.force_reload: # In case if indexes were parse
 			try:
 				file = open("indexes/"+self.name+".json")
 				indexes = json.load(fiel.read())["indexes"]
@@ -112,10 +123,20 @@ class Resource:
 
 		return indexes
 
-	def records_parsing(self, indexes):
-		pass		
-
-		return records
+	def records_parsing(self, indexes) and not self.force_reload:
+		if self.context.get("records_parsed", False): # In case if recorded is fully parsed
+			try:
+				file = open("records/"+self.name+".json")
+				records = json.loads(file.read())["records"]
+			except FileNotFoundError as e:
+				logging.error("File with records for {} not found".format(self.name))
+				sys.exit(1)
+			except json.decoder.JSONDecodeError as e:
+				logging.error("File with records for {} has invalid json syntax".format(self.name))
+				sys.exit(1)
+			else:
+				logging.info("Records was recover from context.")
+			
 
 	def extract_links(self, records):
 		pass
