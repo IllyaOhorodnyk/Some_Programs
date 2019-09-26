@@ -124,10 +124,10 @@ class Resource:
 		return indexes
 
 	def records_parsing(self, indexes) and not self.force_reload:
-		if self.context.get("records_parsed", False): # In case if recorded is fully parsed
+		if self.context.get("records_parsed", False): # In case if records are fully parsed
 			try:
 				file = open("records/"+self.name+".json")
-				records = json.loads(file.read())["records"]
+				self.records = json.loads(file.read())["records"]
 			except FileNotFoundError as e:
 				logging.error("File with records for {} not found".format(self.name))
 				sys.exit(1)
@@ -136,7 +136,21 @@ class Resource:
 				sys.exit(1)
 			else:
 				logging.info("Records was recover from context.")
-			
+														# In case if parsing records started but was undone
+		elif self.context.get("records_parsing_started", False) and self.context.get("latest_index", False):
+			pass
+		elif not self.context.get("records_parsing_started", False): # In case if parsing even did not start
+			self.context["records_parsing_started"] = True
+			self.records = Context("records/"+self.name+".json")
+			self.records["records"] = list()
+			for index in indexes:
+				self.context["latest_index"] = index
+				self.recods["records"].append(self.parse(index, self.recordParseSelectors))
+
+			self.context["records_parsing_started"] = False
+			self.context["records_parsed"] = True
+		else:
+			raise RuntimeError("Unexcepted case.")
 
 	def extract_links(self, records):
 		pass
