@@ -10,7 +10,6 @@ from urllib.request import Request, urlopen
 
 from bs4 import BeautifulSoup as bs
 
-from context import Context
 from extra import Resource
 
 def main():

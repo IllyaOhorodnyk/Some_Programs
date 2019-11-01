@@ -79,7 +79,8 @@ class Resource:
 		return indexes
 
 	def indexation(self):
-		if self.enumerationSet: # In case if indexes in enumerationSet
+		#### In case if indexes in enumerationSet #####
+		if self.enumerationSet:
 			try:
 				file = open(self.enumerationSet)
 				enumerations = json.loads(file.read())
@@ -94,7 +95,8 @@ class Resource:
 				logging.info("Successful got indexes from enumerationSet")
 				self.context["indexed"] = True
 				Context("indexes/"+self.name+".json")["indexes"] = indexes
-		elif self.context.get("indexed", False) and not self.force_reload: # In case if indexes were parse
+		###### In case if indexes were parse #######
+		elif self.context.get("indexed", False) and not self.force_reload: 
 			try:
 				file = open("indexes/"+self.name+".json")
 				indexes = json.load(fiel.read())["indexes"]
@@ -106,7 +108,8 @@ class Resource:
 				sys.exit(1)
 			else:
 				logging.info("Indexes file is successful parsed.")
-		elif not self.context.get("indexed", False) or self.force_reload: # In case if not indexed yet or need to force reload
+		##### In case if not indexed yet or need to force reload ##########
+		elif not self.context.get("indexed", False) or self.force_reload: 
 			url = "https://" + self.domain + self.dividion
 			try:
 				pages_count = int(self.select_from_url(url, self.pagesCountSelector)[0])
@@ -124,7 +127,8 @@ class Resource:
 		return indexes
 
 	def records_parsing(self, indexes) and not self.force_reload:
-		if self.context.get("records_parsed", False): # In case if records are fully parsed
+		##### In case if records is fully parsed ########
+		if self.context.get("records_parsed", False):
 			try:
 				file = open("records/"+self.name+".json")
 				self.records = json.loads(file.read())["records"]
@@ -136,10 +140,14 @@ class Resource:
 				sys.exit(1)
 			else:
 				logging.info("Records was recover from context.")
-														# In case if parsing records started but was undone
+	        ##### In case if parsing records started but was undone ######
 		elif self.context.get("records_parsing_started", False) and self.context.get("latest_index", False):
-			pass
-		elif not self.context.get("records_parsing_started", False): # In case if parsing even did not start
+			latest_index = self.context.get("latest_index")
+			self.records = Context("records/"+self.name+".json")
+			for index in range(indexes.index(latest_index), len(indexes)):
+				self.records[""]
+		##### In case if parsing even did not start ####
+		elif not self.context.get("records_parsing_started", False):
 			self.context["records_parsing_started"] = True
 			self.records = Context("records/"+self.name+".json")
 			self.records["records"] = list()
