@@ -146,6 +146,7 @@ class Resource:
 			self.records = Context("records/"+self.name+".json")
 			for index in range(indexes.index(latest_index), len(indexes)):
 				self.records[""]
+			###### Need to continue #######
 		##### In case if parsing even did not start ####
 		elif not self.context.get("records_parsing_started", False):
 			self.context["records_parsing_started"] = True
