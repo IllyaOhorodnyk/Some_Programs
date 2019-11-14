@@ -1,4 +1,5 @@
 What i realy want:
+
 --- Buy Bass for Rostik
 Goal:
 	Meckesha have bass guitar
@@ -15,7 +16,7 @@ Plan:
 When:
 	23 November
 
-Requirment:
+Requirments:
 	Allocate time ()
 	Money (4500-6000 uah + delivery)
 
@@ -35,12 +36,12 @@ Plan:
 When:
 	Till 14 December
 
-Requirment:
+Requirments:
 	Meckesha's Bass was bought
 	Allocate time ()
 	Money (3000-5000 uan/mounth)
 
-- Buy notebook for me
+--- Buy notebook for me
 Goal:
 	I have notebook
 
@@ -56,23 +57,74 @@ Plan:
 When:
 	After rent apartament and when I will have money (20 November - 20 December)
 
-Requirment:
+Requirments:
 	Meckesha's Bass was buy
 	Apartaments was rent
 	Allocate  time ()
 	Money (3000-7000 uah + maybe delivery)
 	
 
-- Skills for work
+--- Skills for work
+Goal:
 
-- Guitar skills
+Plan:
 
-- Gather band
+When:
 
-- Piano skills
+Requirments:
 
-- Bug bounty program participate
+--- Guitar skills
+Goal:
 
-- Box
+Plan:
 
-- Vinil turntable
+When:
+
+Requirments:
+
+--- Gather band
+Goal:
+
+Plan:
+
+When:
+
+Requirments:
+
+--- Piano skills
+Goal:
+
+Plan:
+
+When:
+
+Requirments:
+
+--- Bug bounty program participate
+Goal:
+
+Plan:
+
+When:
+
+Requirments:
+
+--- Box
+Goal:
+
+Plan:
+
+When:
+
+Requirments:
+
+--- Vinyl turntable
+Goal:
+	I have vinyl turntable
+
+Plan:
+
+When:
+
+Requirments:
+	Better apartament
