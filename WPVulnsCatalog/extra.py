@@ -5,221 +5,158 @@ import json
 import ssl
 
 from urllib.request import Request, urlopen
+from typing import List, Dict
 
 from bs4 import BeautifulSoup as bs
 
 class Resource:
-	def __init__(self, configuration, force_reload=False):
-		if not isinstance(configuration, dict):
-			raise ValueError("Parameter configuration should be dict.")
+    def __init__(self, name: str):
+        pass
 
-		if not isinstance(force_reload, bool):
-			raise ValusError("Parameter force_reload should be bool.")
+    def parse(self):
+        pass
 
-		self.force_reload = force_reload
+class Index:
+    def __init__(self, url: str):
+        pass
 
-		self.assign_config(configuration)
-		# Create context for this resource
-		self.context = Context("contextes/"+configuration["name"]+".json")
-
-	def assign_config(self, config):
-		# List of all keys
-		keys = ["name", "domain", "dividion", "enumerationOption",
-			"enumerationSet", "pagesCountSelector", "recordParseSelectors",
-			"recordLinkSelector", "itemParseSelectors", "parserBypass"]
-		# List of keys that relate to dictrionaty type
-		keys_dicts = ["recordParseSelectors", "itemParseSelectors"]
-		# List of keys that relate to string type
-		keys_strings = ["name", "domain", "dividion", "enumerationOption", 
-				"enumerationSet", "pagesCountSelector", "recordLinkSelector",
-				"parserBypass"]
-		# Check to all keys exist
-		for key in keys:
-			if not config.get(key, False):
-				logging.error("Missing {} key".format(key))
-				raise ValueError("Missing {} key".format(key))
-		# Check to keys_dict are relate to dictionary type
-		for key in keys_dicts:
-			if not isinstance(config[key], dict):
-				logging.error("Invalid type of key {}".format(key))
-				raise ValueError("Key {} should be dict".format(key))
-		# Check to keys_strings are relate to str type
-		for key in keys_strings:
-			if not isinstance(config[key], str):
-				logging.error("Invalid type of key {}".format(key))
-				raise ValueError("Key {} should be str".format(key))
-		# Assigment key from configuration dictionary to instance as attributes
-		for key in keys:
-			self.__setattr__(key, config[key])
-
-	def select_from_url(self, url, selector):
-		if isinstance(selector, str):
-			request = Reqeust(url)
-			plain_text = urlopen(request, context=ssl.SSLContext())
-			soup = bs(plain_text, "html.parser")
-
-			return soup.select(selector)
-
-		elif isinstance(selector, dict):
-			result = dict()
-			for key in selector:
-				request = Request(url)
-				plain_text = urlopen(request, context=ssl.SSLContext())
-				soup = bs(plain_text, "html.parser")
-				result[key] = soup.select(selector[key])
-
-			return result
-
-	def make_indexes(self, enumerations):
-		indexes = list()
-		for each in enumeration:
-			url = "https://" + self.domain + self.dividion + self.enumerationOption + each
-			indexes.append(url)
-
-		return indexes
-
-	def indexation(self):
-		#### In case if indexes in enumerationSet #####
-		if self.enumerationSet:
-			try:
-				file = open(self.enumerationSet)
-				enumerations = json.loads(file.read())
-			except FileNotFoundError as e:
-				logging.error("File {} not found.".format(self.enumerationSet))
-				sys.exit(1)
-			except json.decoder.JSONDecodeError as e:
-				logging.error("File {} has invalid json syntax.".format(self.enumerationSet))
-				sys.exeit(1)
-			else:
-				indexes = self.make_indexes(enumerations)
-				logging.info("Successful got indexes from enumerationSet")
-				self.context["indexed"] = True
-				Context("indexes/"+self.name+".json")["indexes"] = indexes
-		###### In case if indexes were parse #######
-		elif self.context.get("indexed", False) and not self.force_reload: 
-			try:
-				file = open("indexes/"+self.name+".json")
-				indexes = json.load(fiel.read())["indexes"]
-			except FileNotFound as e:
-				logging.error("Indexes file for {} not found".format(self.name))
-				sys.exit(1)
-			except json.decoder.JSONDecodeError as e:
-				logging.error("Indexes file for {} has invalid json syntax".format(self.name))
-				sys.exit(1)
-			else:
-				logging.info("Indexes file is successful parsed.")
-		##### In case if not indexed yet or need to force reload ##########
-		elif not self.context.get("indexed", False) or self.force_reload: 
-			url = "https://" + self.domain + self.dividion
-			try:
-				pages_count = int(self.select_from_url(url, self.pagesCountSelector)[0])
-			except Exception as e:
-				logging.warning(repr(e))
-				raise e
-
-			indexes = self.make_indexes(list(range(1, pages_count+1)))
-			self.context["indexed"] = True
-			Context("indexes/"+self.name+".json")["indexes"] = indexes
-			logging.info("Indexes was get from pages_count")
-		else:
-			raise RuntimeError("Unexcepted case.")
-
-		return indexes
-
-	def records_parsing(self, indexes) and not self.force_reload:
-		##### In case if records is fully parsed ########
-		if self.context.get("records_parsed", False):
-			try:
-				file = open("records/"+self.name+".json")
-				self.records = json.loads(file.read())["records"]
-			except FileNotFoundError as e:
-				logging.error("File with records for {} not found".format(self.name))
-				sys.exit(1)
-			except json.decoder.JSONDecodeError as e:
-				logging.error("File with records for {} has invalid json syntax".format(self.name))
-				sys.exit(1)
-			else:
-				logging.info("Records was recover from context.")
-	        ##### In case if parsing records started but was undone ######
-		elif self.context.get("records_parsing_started", False) and self.context.get("latest_index", False):
-			latest_index = self.context.get("latest_index")
-			self.records = Context("records/"+self.name+".json")
-			for index in range(indexes.index(latest_index), len(indexes)):
-				self.records[""]
-			###### Need to continue #######
-		##### In case if parsing even did not start ####
-		elif not self.context.get("records_parsing_started", False):
-			self.context["records_parsing_started"] = True
-			self.records = Context("records/"+self.name+".json")
-			self.records["records"] = list()
-			for index in indexes:
-				self.context["latest_index"] = index
-				self.recods["records"].append(self.parse(index, self.recordParseSelectors))
-
-			self.context["records_parsing_started"] = False
-			self.context["records_parsed"] = True
-		else:
-			raise RuntimeError("Unexcepted case.")
-
-	def extract_links(self, records):
-		pass
-
-		return links
-
-	def pages_parsing(self, links)
-		pass
-
-		return pages
-
-	def parse()
-		indexes = self.indexation()
-		records = self.records_parsing(indexes)
-		links = self.extract_links(records)
-		pages = self.pages_parsing(links)
-
-	def __repr__(self):
-		return "<Resourse instance with cofiguration: {}>".format(self.configuration)
-
+    def parse(self, selector: str):
+        pass
 
 class Context(dict):
-        def __init__(self, filename):
+    def __init__(self, filename: str):
                 if not isinstance(filename, str):
-                        raise ValueError("Value filename should be str")
-
-                self.filename = filename
+                    logging.error(text["Context.filename.error"])
+                    raise ValueError(text["Context.filename.error"].format(
+                        filename))
+                    self.filename = filename
 
                 try:
-                        file = open(filename, "r")
-                        self.__context = json.loads(file.read())
-                except FileExistsError as e:
-                        print("Create an empty context", filename)
-                        self.__context = dict()
-                except json.decoder.JSONDecodeError as e:
-                        print("Invalid json format of file {}, is creating empty context.".format(filename))
-                        self.__context = dict()
-                finally:
-                        file.flush()
-                        file.close()
+                    file = open(filename, 'r')
+                    logging.info(text["Context.file.opened"].format(
+                        self.filename))
+                    self.__context = json.loads(file.read())
+                
+                except FileNotFoundError as e:
+                    file = open(filename, 'x')
+                    logging.info(text["Context.file.created"].format(
+                        filename))
+                    self.__context = dict()
 
-        def __setitem__(self, key, value):
+                except json.JSONDecodeError as e:
+                    logging.error(text["Context.file.invalid"].format(
+                        filename))
+                    raise json.JSONDecodeError(
+                            text["Context.file.invalid"].format(filename))
+                
+                finally:
+                    file.flush()
+                    file.close()
+
+        def __setitem__(self, key: str, value: str):
                 self.__context[key] = value
                 try:
                         file = open(self.filename, "w")
                 except FileNotFoundError as e:
+                        logging.warning(text["Context.file.recreate"].format(
+                            self.filename))
                         file = open(self.filename, "x")
                 finally:
                         file.write(json.dumps(self.__context))
                         file.flush()
                         file.close()
 
-        def __getitem__(self, key):
-                return self.__context[key]
+        def __getitem__(self, key: str):
+            if key in self.__context:
+                return self.__context
 
-        def __deleteitem__(self, key):
+            try:
+                file = open(self.filename, "r")
+                context = json.loads(file.read())
+                output = context[key]
+            
+            except FileNotFoundError as e:
+                logging.error(text["Context.file.missing"].format(
+                    self.filename))
+                raise RuntimeError(text["Context.file.missing"].format(
+                    self.filename))
+
+            except json.JSONDecoderError as e:
+                logging.error(text["Context.file.invalid"].format(
+                    self.filename))
+                raise RuntimeError(text["Context.file.invalid"].format(
+                    self.filename))
+
+            except KeyError as e:
+                logging.warning(text["Context.key.missing".format(key)])
+                raise KeyError(text["Context.key.missing".format(key)])
+
+            finally:
+                file.flush()
+                file.close()
+
+            return output
+
+        def __deleteitem__(self, key: str):
+            if key in self.__context:
                 return self.__context.delete(key)
 
-        def __get(self, key, default=None):
-                return self.__context.get(key, default)
+            try:
+                file = open(self.filename, 'rw')
+                context = json.loads(file.read())
+                output = context.delete(key)
+
+            except FileNotFoundError as e:
+                logging.error(text["Context.file.missing"].format(
+                    self.filename))
+                raise RuntimeError(text["Context.file.missing"].format(
+                    self.filename))
+
+            except json.JSONDecoderError as e:
+                logging.error(text["Context.file.invalid"].format(
+                    self.filename))
+                raise RuntimeError(text["Context.file.invalid"].format(
+                    self.filename))
+
+            except KeyError as e:
+                logging.warning(text["Context.key.missing"].format(key))
+                raise KeyError(text["Context.key.missing"].format(key))
+
+            finally:
+                file.write(json.dumps(context))
+                file.flush()
+                file.close()
+
+        def __get(self, key: str, default=None):
+            if key in self.__context:
+                return self.__context.get(key)
+
+            try:
+                file = open(self.filename, 'r')
+                context = json.loads(file.read())
+                output.context[key]
+
+            except FileNotFoundError as e:
+                logging.error(text["Context.file.missing"].format(
+                    self.filename))
+                raise RuntimeError(text["Context.file.missing"].format(
+                    self.filename))
+
+            except json.JSONDecoderError as e:
+                logging.error(text["Context.file.invalid"].format(
+                    self.filename))
+                raise RuntimeError(text["Context.file.invalid"].format(
+                    self.filename))
+
+            except KeyError as e:
+                logging.warning(text["Context.key.missing"])
+                return default
+
+            finally:
+                file.flush()
+                file.close()
+
 
         def __repr__(self):
                 return self.__context.__repr__
+
