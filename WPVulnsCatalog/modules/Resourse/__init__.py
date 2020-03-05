@@ -20,14 +20,14 @@ finally:
 
 
 class Resource:
-    def __init__(self, name: str):
+    def __init__(self, name: str) -> None:
         if not isinstance(name, str):
             logging.error(text["Resourse.name.error"])
             raise ValueError(text["Resourse.name.error"])
         self.name = name
         self.configured = False
 
-    def load_config(self, conf: Dict[str, str]):
+    def load_config(self, conf: Dict[str, str]) -> None:
         if not isinstance(conf, dict):
             logging.error(text["Resourse.conf.error"])
             raise ValueError(text["Resourse.conf.error"])

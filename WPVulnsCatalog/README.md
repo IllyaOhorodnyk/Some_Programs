@@ -14,31 +14,34 @@ Config file structure:
  * * pageParseSelectors; # Internal dictionary of name elements that need extract and CSS selector that extracts it
  * * parserProtectionBypass; # Can be name of func
 
+Modules:
+* Parser
+* Control plane
+* Data source
 
-Procedure of parsing:
- * Create indexes (enumerable object that contain list of values for enumerationOption parameter)
-    config["enumerationOption"], config["enumerationSet"], config["pagesCountSelector"] ==> {INDEXATION} ==> indexes(context protected)
- * Parsing records on each index
-    config["recordParseSelectors"], config["recordLinkSelector"], indexes ==> {RECORDS_PARSE} ==> records(context protected), pages_links(is a part of records)
- * Parsing each page that pointed in pages list
-    config["pageParseSelectors"], pages_links ==> {PAGES_PARSE} ==> pages(context protected)
+Entities for the Parser:
+* Vulnerability
+* Resourse
+* Index
+* Configuration
+* Selector
+* Bypass
+* Context
 
-Context protection implemets: # Context implement on each entity differently
-  * List of contextes:
-  * * Resource
-  * * Indexes
-  * * Records
-  * * Pages
-  * Resource:
-  * * This hold any info about state of resource
-  * Indexes:
-  * * This hold values that describe in recordParseSelector
-  * Pages:
-  * * This hold values that describe in pageParseSelector
-
-
-Structure of vulnerabilities storage:
- * Records (rows in indexed table)
- * Pages (key-value set on each enumerated row)
+Description:
+* Vulnerability:
+* * This class describe Vulnerability object with link to the Index and the Resourse
+* Resourse:
+* * This class describe Resourse object with flexible parse method that depends on configuration
+* Index:
+* * This class represents remote page that hold information about vulnerabiility/link to the next Index and inforation that explain how to parse it
+* Configuration:
+* * This class describe Configuration for specific resourse: Selectors for each Index, code for Bypass, Bundle of Index, Selector for page with vulnerability
+* Selector:
+* * This class describe Selector that desribe how and what extract information from Index
+* Bypass:
+* * This class describe how to bypass parse protection of the Resourse. Can use for whole resourse. Based on python's decorators mechanism.
+* Context:
+* * This class provide protected dictionary. Protect mechanism can be different for each use.
 
 EOF
